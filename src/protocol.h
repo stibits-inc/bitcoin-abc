@@ -251,6 +251,12 @@ extern const char *GETBLOCKTXN;
  * @since protocol version 70014 as described by BIP 152
  */
 extern const char *BLOCKTXN;
+
+/*
+ * Stibits custom message
+ */
+extern const char *STBTS;
+
 /**
  * Contains an AvalanchePoll.
  * Peer should respond with "avaresponse" message.

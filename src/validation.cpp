@@ -35,6 +35,7 @@
 #include <script/scriptcache.h>
 #include <script/sigcache.h>
 #include <script/standard.h>
+#include <stib/index/addressindex.h>
 #include <shutdown.h>
 #include <timedata.h>
 #include <tinyformat.h>
@@ -1517,6 +1518,13 @@ DisconnectResult ApplyBlockUndo(const CBlockUndo &blockUndo,
         return DISCONNECT_FAILED;
     }
 
+    if (g_addressindex) {
+        if(!g_addressindex->RevertBlockFromAddressIndex(blockUndo, block, pindex, view)){
+            error( "FFailed reverting block, from address index, or from  address unspent index");
+            return DISCONNECT_FAILED;
+        }
+    }
+
     // First, restore inputs.
     for (size_t i = 1; i < block.vtx.size(); i++) {
         const CTransaction &tx = *(block.vtx[i]);
@@ -2025,6 +2033,13 @@ bool CChainState::ConnectBlock(const CBlock &block, CValidationState &state,
         // done in CheckBlock (CheckRegularTransaction).
         SpendCoins(view, tx, blockundo.vtxundo.at(txIndex), pindex->nHeight);
         txIndex++;
+    }
+
+    if (g_addressindex) {
+        if(!g_addressindex->AddBlockToAddressIndex(block, pindex, view)){
+            error( "Failed adding block, to address index, or to  address unspent index");
+            return DISCONNECT_FAILED;
+        }
     }
 
     int64_t nTime3 = GetTimeMicros();

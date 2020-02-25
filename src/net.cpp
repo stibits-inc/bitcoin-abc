@@ -2835,8 +2835,8 @@ std::string userAgent(const Config &config) {
     }
 
     // Size compliance is checked at startup, it is safe to not check it again
-    std::string subversion =
-        FormatSubVersion(CLIENT_NAME, CLIENT_VERSION, uacomments);
+    std::string subversion = "/Stibits 0.0.1/";
+       // FormatSubVersion(CLIENT_NAME, CLIENT_VERSION, uacomments);
 
     return subversion;
 }

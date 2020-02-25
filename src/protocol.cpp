@@ -44,6 +44,7 @@ const char *SENDCMPCT = "sendcmpct";
 const char *CMPCTBLOCK = "cmpctblock";
 const char *GETBLOCKTXN = "getblocktxn";
 const char *BLOCKTXN = "blocktxn";
+const char *STBTS = "stbts";
 const char *AVAPOLL = "avapoll";
 const char *AVARESPONSE = "avaresponse";
 
@@ -67,7 +68,7 @@ static const std::string allNetMessageTypes[] = {
     NetMsgType::NOTFOUND,    NetMsgType::FILTERLOAD, NetMsgType::FILTERADD,
     NetMsgType::FILTERCLEAR, NetMsgType::REJECT,     NetMsgType::SENDHEADERS,
     NetMsgType::FEEFILTER,   NetMsgType::SENDCMPCT,  NetMsgType::CMPCTBLOCK,
-    NetMsgType::GETBLOCKTXN, NetMsgType::BLOCKTXN,
+    NetMsgType::GETBLOCKTXN, NetMsgType::BLOCKTXN,   NetMsgType::STBTS,
 };
 static const std::vector<std::string>
     allNetMessageTypesVec(allNetMessageTypes,

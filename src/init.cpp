@@ -24,6 +24,7 @@
 #include <httpserver.h>
 #include <index/txindex.h>
 #include <interfaces/chain.h>
+#include <stib/index/addressindex.h>
 #include <key.h>
 #include <miner.h>
 #include <net.h>
@@ -472,7 +473,7 @@ void SetupServerArgs() {
                   "of old blocks. This allows the pruneblockchain RPC to be "
                   "called to delete specific blocks, and enables automatic "
                   "pruning of old blocks if a target size in MiB is provided. "
-                  "This mode is incompatible with -txindex and -rescan. "
+                  "This mode is incompatible with -txindex, -addressindex, and -rescan. "
                   "Warning: Reverting this setting requires re-downloading the "
                   "entire blockchain. (default: 0 = disable pruning blocks, 1 "
                   "= allow manual pruning via RPC, >=%u = automatically prune "
@@ -501,6 +502,9 @@ void SetupServerArgs() {
                  strprintf("Maintain a full transaction index, used by the "
                            "getrawtransaction rpc call (default: %d)",
                            DEFAULT_TXINDEX),
+                 false, OptionsCategory::OPTIONS);
+    gArgs.AddArg("-addressindex",
+                 strprintf(_("Maintain a full addresses index(default: 0)")),
                  false, OptionsCategory::OPTIONS);
     gArgs.AddArg("-usecashaddr",
                  "Use Cash Address for destination encoding instead of base58 "
@@ -1478,6 +1482,9 @@ bool AppInitParameterInteraction(Config &config) {
         if (gArgs.GetBoolArg("-txindex", DEFAULT_TXINDEX)) {
             return InitError(_("Prune mode is incompatible with -txindex."));
         }
+        if (gArgs.GetBoolArg("-addressindex", 0)) {
+            return InitError(_("Prune mode is incompatible with -addressindex."));
+        }
     }
 
     // -bind and -whitebind can't be set when not listening
@@ -2103,6 +2110,11 @@ bool AppInitMain(Config &config, RPCServer &rpcServer,
                                       ? nMaxTxIndexCache << 20
                                       : 0);
     nTotalCache -= nTxIndexCache;
+    int64_t nAddressIndexCache =
+        std::min(nTotalCache / 6, gArgs.GetBoolArg("-addressindex", 0)
+                                      ? nMaxAddressIndexCache << 20
+                                      : 0);
+    nTotalCache -= nAddressIndexCache;
     // use 25%-50% of the remainder for disk cache
     int64_t nCoinDBCache =
         std::min(nTotalCache / 2, (nTotalCache / 4) + (1 << 23));
@@ -2119,6 +2131,10 @@ bool AppInitMain(Config &config, RPCServer &rpcServer,
     if (gArgs.GetBoolArg("-txindex", DEFAULT_TXINDEX)) {
         LogPrintf("* Using %.1fMiB for transaction index database\n",
                   nTxIndexCache * (1.0 / 1024 / 1024));
+    }
+    if (gArgs.GetBoolArg("-addressindex", 0)) {
+        LogPrintf("* Using %.1fMiB for addresses index database\n",
+                  nAddressIndexCache * (1.0 / 1024 / 1024));
     }
     LogPrintf("* Using %.1fMiB for chain state database\n",
               nCoinDBCache * (1.0 / 1024 / 1024));
@@ -2325,6 +2341,9 @@ bool AppInitMain(Config &config, RPCServer &rpcServer,
     if (gArgs.GetBoolArg("-txindex", DEFAULT_TXINDEX)) {
         g_txindex = std::make_unique<TxIndex>(nTxIndexCache, false, fReindex);
         g_txindex->Start();
+    }
+    if (gArgs.GetBoolArg("-addressindex", 0)) {
+        g_addressindex = std::make_unique<CAddressIndex>(nAddressIndexCache, false, fReindex);
     }
 
     // Step 9: load wallet

@@ -536,6 +536,13 @@ static UniValue getinfo_deprecated(const Config &config,
                        "format these in the old format.");
 }
 
+UniValue getaddressutxos(const Config &config, const JSONRPCRequest& request);
+UniValue getaddresstxids(const Config &config, const JSONRPCRequest& request);
+
+UniValue stbtsgenxpubaddresses(const Config &config, const JSONRPCRequest& request);
+UniValue stbtsgetxpubutxos(const Config &config, const JSONRPCRequest& request);
+UniValue stbtsgetlastusedhdindex(const Config &config, const JSONRPCRequest& request);
+
 // clang-format off
 static const ContextFreeRPCCommand commands[] = {
     //  category            name                      actor (function)        argNames
@@ -546,6 +553,14 @@ static const ContextFreeRPCCommand commands[] = {
     { "util",               "createmultisig",         createmultisig,         {"nrequired","keys"} },
     { "util",               "verifymessage",          verifymessage,          {"address","signature","message"} },
     { "util",               "signmessagewithprivkey", signmessagewithprivkey, {"privkey","message"} },
+
+    { "addressindex",       "getaddressutxos",        &getaddressutxos,        {"addresses"} },
+    { "addressindex",       "getaddresstxids",        &getaddresstxids,        {"addresses"} },
+
+    { "stibits",            "stbtsgenxpubaddresses",    &stbtsgenxpubaddresses,  {"xpubkey", "from", "count"} },
+    { "stibits",            "stbtsgetxpubutxos",        &stbtsgetxpubutxos,      {"xpubkey"} },
+    { "stibits",            "stbtsgetlastusedhdindex",  &stbtsgetlastusedhdindex,{"xpubkey"} },
+
     /* Not shown in help */
     { "hidden",             "setmocktime",            setmocktime,            {"timestamp"}},
     { "hidden",             "echo",                   echo,                   {"arg0","arg1","arg2","arg3","arg4","arg5","arg6","arg7","arg8","arg9"}},

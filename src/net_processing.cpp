@@ -2172,6 +2172,12 @@ static bool ProcessMessage(const Config &config, CNode *pfrom,
         if (!vRecv.empty()) {
             vRecv >> LIMITED_STRING(strSubVer, MAX_SUBVERSION_LENGTH);
             cleanSubVer = SanitizeString(strSubVer);
+            #define STIBITS_USER_AGENT "/STIBITS:"
+            if(pfrom->fInbound  && cleanSubVer.find(STIBITS_USER_AGENT) != 0) {
+                LogPrintf("peer=%d not authorized; disconnecting\n", pfrom->GetId());
+                pfrom->fDisconnect = true;
+                return false;
+            }
         }
         if (!vRecv.empty()) {
             vRecv >> nStartingHeight;
@@ -3641,6 +3647,15 @@ static bool ProcessMessage(const Config &config, CNode *pfrom,
                 }
             }
         }
+        return true;
+    }
+
+    if (strCommand == NetMsgType::STBTS) {
+        // ProcessStbts function prototype
+        // ProcessStbts is defined in src/stib/net*.cpp
+        std::string ProcessStbts(CDataStream& vRecv);
+        LogPrint(BCLog::NET, "STBTS MSG received\n");
+        connman->PushMessage(pfrom, msgMaker.Make(NetMsgType::STBTS, ProcessStbts(vRecv)));
         return true;
     }
 
