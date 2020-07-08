@@ -542,6 +542,7 @@ UniValue getaddresstxids(const Config &config, const JSONRPCRequest& request);
 UniValue stbtsgenxpubaddresses(const Config &config, const JSONRPCRequest& request);
 UniValue stbtsgetxpubutxos(const Config &config, const JSONRPCRequest& request);
 UniValue stbtsgetlastusedhdindex(const Config &config, const JSONRPCRequest& request);
+UniValue stbtsgetfirstusedblock(const Config &config, const JSONRPCRequest& request);
 
 // clang-format off
 static const ContextFreeRPCCommand commands[] = {
@@ -560,6 +561,7 @@ static const ContextFreeRPCCommand commands[] = {
     { "stibits",            "stbtsgenxpubaddresses",    &stbtsgenxpubaddresses,  {"xpubkey", "from", "count"} },
     { "stibits",            "stbtsgetxpubutxos",        &stbtsgetxpubutxos,      {"xpubkey"} },
     { "stibits",            "stbtsgetlastusedhdindex",  &stbtsgetlastusedhdindex,{"xpubkey"} },
+    { "stibits",            "stbtsgetfirstusedblock",   &stbtsgetfirstusedblock, {"xpubkey"} },
 
     /* Not shown in help */
     { "hidden",             "setmocktime",            setmocktime,            {"timestamp"}},

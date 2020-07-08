@@ -508,6 +508,31 @@ int GetLastUsedIndex(std::vector<std::pair<uint160, int>> &addresses)
     return r;
 }
 
+
+int  GetFirstBlockHeightForAddresses(std::vector<std::pair<uint160, int>> &addresses)
+{
+    std::vector<std::pair<CAddressIndexKey, CAmount> > addressIndex;
+    
+    for (auto& a: addresses) {
+        if (!GetAddressIndex(a.first, a.second, addressIndex)) {
+            throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "No information available for address");
+        }
+    }
+    
+    if (addressIndex.size() == 0 ) return -1;
+    
+    int blockHeight = addressIndex[0].first.blockHeight;
+    
+    for (auto& a: addressIndex) {
+		if (a.first.blockHeight < blockHeight)
+            blockHeight = a.first.blockHeight;
+    }
+
+    return blockHeight;
+}
+
+
+
 UniValue getaddressutxos(const Config &config, const JSONRPCRequest& request)
 {
     if (request.fHelp || request.params.size() != 1)
