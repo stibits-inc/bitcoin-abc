@@ -541,6 +541,7 @@ UniValue getaddresstxids(const Config &config, const JSONRPCRequest& request);
 
 UniValue stbtsgenxpubaddresses(const Config &config, const JSONRPCRequest& request);
 UniValue stbtsgetxpubutxos(const Config &config, const JSONRPCRequest& request);
+UniValue stbtsgetxpubtxs(const Config &config, const JSONRPCRequest& request);
 UniValue stbtsgetlastusedhdindex(const Config &config, const JSONRPCRequest& request);
 UniValue stbtsgetfirstusedblock(const Config &config, const JSONRPCRequest& request);
 
@@ -549,7 +550,7 @@ static const ContextFreeRPCCommand commands[] = {
     //  category            name                      actor (function)        argNames
     //  ------------------- ------------------------  ----------------------  ----------
     { "control",            "getmemoryinfo",          getmemoryinfo,          {"mode"} },
-    { "control",             "logging",                logging,                {"include", "exclude"} },
+    { "control",            "logging",                logging,                {"include", "exclude"} },
     { "util",               "validateaddress",        validateaddress,        {"address"} }, /* uses wallet if enabled */
     { "util",               "createmultisig",         createmultisig,         {"nrequired","keys"} },
     { "util",               "verifymessage",          verifymessage,          {"address","signature","message"} },
@@ -560,6 +561,7 @@ static const ContextFreeRPCCommand commands[] = {
 
     { "stibits",            "stbtsgenxpubaddresses",    &stbtsgenxpubaddresses,  {"xpubkey", "from", "count"} },
     { "stibits",            "stbtsgetxpubutxos",        &stbtsgetxpubutxos,      {"xpubkey"} },
+    { "stibits",            "stbtsgetxpubtxs",          &stbtsgetxpubtxs,        {"xpubkey"} },
     { "stibits",            "stbtsgetlastusedhdindex",  &stbtsgetlastusedhdindex,{"xpubkey"} },
     { "stibits",            "stbtsgetfirstusedblock",   &stbtsgetfirstusedblock, {"xpubkey"} },
 
